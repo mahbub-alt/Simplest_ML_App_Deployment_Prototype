@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Crop Prediction App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>🌱 Crop Yield Prediction</h2>
+    <form id="cropForm">
+      <label>Rainfall (mm):</label>
+      <input type="number" id="rain" required><br>
+
+      <label>Temperature (°C):</label>
+      <input type="number" id="temp" required><br>
+
+      <label>Soil Type:</label>
+      <select id="soil">
+        <option value="0">Sandy</option>
+        <option value="1">Loam</option>
+        <option value="2">Clay</option>
+      </select><br>
+
+      <button type="submit">Predict</button>
+    </form>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    document.getElementById("cropForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const rain = parseFloat(document.getElementById("rain").value);
+      const temp = parseFloat(document.getElementById("temp").value);
+      const soil = parseInt(document.getElementById("soil").value);
+      
+      //  sends data to backend
+      const res = await fetch("http://127.0.0.1:8000/predict", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({rain, temp, soil_index: soil})
+      });
+
+      //  recieves data from backend
+      const data = await res.json();
+      document.getElementById("result").innerText =
+        "🌾 Crop Yield: " + data.prediction;
+    };
+  </script>
+</body>
+</html>
